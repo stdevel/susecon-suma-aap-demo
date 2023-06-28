@@ -1,0 +1,20 @@
+---
+- name: Install patches
+  hosts: all
+  become: false
+  gather_facts: false
+  tasks:
+    - name: Load credentials
+      ansible.builtin.include_vars: credentials.yml
+      delegate_to: localhost
+
+    - name: Schedule patch installation
+      stdevel.uyuni.install_patches:
+        uyuni_host: CHANGE-ME
+        uyuni_user: "{{ uyuni_username }}"
+        uyuni_password: "{{ uyuni_password }}"
+        uyuni_verify_ssl: false
+        name: "{{ item }}"
+        include_patches: "{{ include_patches | default(omit) }}"
+      delegate_to: localhost
+      loop: "{{ groups['all'] | list }}"

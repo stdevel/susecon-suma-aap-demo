@@ -1,0 +1,24 @@
+---
+- name: Create snapshots
+  hosts: all
+  become: false
+  gather_facts: false
+  tasks:
+    - name: Load credentials
+      ansible.builtin.include_vars: credentials.yml
+      delegate_to: localhost
+
+    - name: Create VM snapshot
+      community.vmware.vmware_guest_snapshot:
+        hostname: http://CHANGE-ME.shitty.robots.loc
+        username: "{{ vcenter_username }}"
+        password: "{{ vcenter_password }}"
+        validate_certs: false
+        datacenter: CHANGE_ME
+        folder: CHANGE_ME
+        name: "{{ item }}"
+        state: present
+        snapshot_name: Ansible Maintenance
+        description: Snapshot before maintenance created by Ansible
+      delegate_to: localhost
+      loop: "{{ groups['all'] | list }}"

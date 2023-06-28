@@ -1,0 +1,25 @@
+---
+- name: Schedule downtime
+  hosts: all
+  become: false
+  gather_facts: false
+  tasks:
+    - name: Load credentials
+      ansible.builtin.include_vars: credentials.yml
+      delegate_to: localhost
+
+    - name: Schedule host downtime
+      tribe29.checkmk.downtime:
+        server_url: http://CHANGE-ME.shitty.robots.loc
+        site: CHANGE-ME
+        automation_user: "{{ cmk_username }}"
+        automation_secret: "{{ cmk_password }}"
+        host_name: "{{ item }}"
+        start_after:
+          seconds: 1
+        end_after:
+          hours: 4
+        comment:
+          description: Downtime for maintenance created by Ansible
+      delegate_to: localhost
+      loop: "{{ groups['all'] | list }}"

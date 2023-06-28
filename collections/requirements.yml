@@ -1,0 +1,9 @@
+---
+collections:
+  - name: stdevel.uyuni
+    version: 0.1.1
+  - name: community.vmware
+    version: 3.6.0
+  - name: tribe29.checkmk
+    version: 0.22.0
+

@@ -1,0 +1,21 @@
+---
+- name: Run OpenSCAP scan
+  hosts: all
+  become: false
+  gather_facts: false
+  tasks:
+    - name: Load credentials
+      ansible.builtin.include_vars: credentials.yml
+      delegate_to: localhost
+
+    - name: Schedule OpenSCAP run
+      stdevel.uyuni.openscap_run:
+        uyuni_host: CHANGE-ME
+        uyuni_user: "{{ uyuni_username }}"
+        uyuni_password: "{{ uyuni_password }}"
+        uyuni_verify_ssl: false
+        name: "{{ item }}"
+        document: /usr/share/openscap/scap-yast2sec-xccdf.xml
+        arguments: --profile Default
+      delegate_to: localhost
+      loop: "{{ groups['all'] | list }}"
